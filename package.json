@@ -1,0 +1,31 @@
+{
+  "name": "entrancexam401",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdallahhamoury/entrancexam401.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abdallahhamoury/entrancexam401/issues"
+  },
+  "homepage": "https://github.com/abdallahhamoury/entrancexam401#readme",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "bootstrap": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.5",
+    "npm": "^7.22.0",
+    "react-bootstrap": "^2.0.0-beta.6"
+  }
+}
