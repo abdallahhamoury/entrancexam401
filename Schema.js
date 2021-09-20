@@ -1,13 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-
-const schema = new mongoose.Schema({
+const Schema = new mongoose.Schema({
     title: String,
-    email: String,
     imageUrl: String,
-});
+    email: String,
+  });
 
-
-
-
-module.exports = schema;
+  module.exports =Schema;

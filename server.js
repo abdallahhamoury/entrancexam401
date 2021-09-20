@@ -1,85 +1,86 @@
-'use strict'
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+'use strict';
+
 const axios = require('axios');
-const mongoose = require('mongoose');
-const PORT = process.env.PORT;
+const cors = require('cors');
+const express = require('express');
+const mongoose = require('mongoose')
+require('dotenv').config();
+const PORT = process.env.PORT ;
 const server = express();
 server.use(cors());
-const Schema = require("./Schema");
 server.use(express.json());
+const Schema = require('./Schema');
+const apiDataHandler = require('./ApiData');
 
-mongoose.connect(`${process.env.MANGO_APP}`, { useNewUrlParser: true, useUnifiedTopology: true });
 
-const FavModel = mongoose.model('FavC', Schema);
+mongoose.connect(`${process.env.MONGO_LINK}`, { useNewUrlParser: true, useUnifiedTopology: true });
 
-server.get('/test', testHandler);
-server.get('/getFav', getFavHandler);
-server.post('/addToFav', addToFavHandler);
-server.delete('/deleteFav/:favId', deleteFavHandler);
-server.put('/updateFav:favId', upDateFavHandler);
+const FavModul = mongoose.model('FavList', Schema);
+
+server.get('/test',testHandler);
+server.get('/getDataFromApi',apiDataHandler);
+server.get('/getFav',getFavHandler);
+server.post('/addFav',addFavHandler);
+server.delete('/deleteFav/:favId',deleteFavHandler);
+server.put('/updateFav/:favId',updateFavHandler);
+
+
+
+function getFavHandler(req, res){
+    let email = req.query.email
+    FavModul.find({email: email},(err, resultData) => {
+        if(err){
+            console.log("error in geting data");
+        }else{
+            console.log(resultData);
+            res.send(resultData);
+        }
+    })
+}
+
+async function addFavHandler(req, res){
+    console.log("in addfav handler");
+    console.log(req.body);
+    let email = req.query.email;
+    console.log(email);
+    let { title,imageUrl}=req.body;
+    await FavModul.create({title, imageUrl,email});
+    res.send("data added");
+}
+
+async function deleteFavHandler (req, res){
+    console.log("in delete handler");
+    let id = req.params.favId;
+    FavModul.remove({_id:id},(err,deletedData)=>{
+        if (err){
+            console.log(err);
+        }else{
+            console.log("deleted",deletedData);
+            getFavHandler(req,res);
+        }
+    })
+
+}
+
+async function updateFavHandler(req,res){
+
+    let id = req.params.favId;
+    let { title,imageUrl,email}=req.body;
+    FavModul.findByIdAndUpdate(id,{ title,imageUrl,email},(err,updateFav)=>{
+        if(err){
+            console.log("err");
+        }else{
+            console.log("data updated");
+            getFavHandler(req,res);
+        }
+    })
+}
+
 
 function testHandler(req, res) {
-    console.log('all good');
-}
-
-
-function getFavHandler(req, res) {
-    let email = req.query.email;
-    FavModel.find({ email: email }, function (err, resultdata) {
-        if (err) {
-            console.log('There no err from get Fav');
-        } else {
-            console.log(resultdata);
-            res.send(resultdata);
-        }
-    })
-}
-
-
-async function addToFavHandler(req, res) {
-    let email = req.query.email;
-    let { title, imageUrl } = req.body;
-    await FavModel.create({ title, imageUrl, email });
-    res.send('All good')
-}
-
-
-async function deleteFavHandler(req, res) {
-    let id = req.params.favId;
-    FavModel.remove({ _id: id }, (error, deletedSlice) => {
-        if (error) {
-            console.log('error in deleting the data');
-        } else {
-            console.log('data deleted', deletedSlice);
-            getFavHandler(req, res)
-        }
-    });
-}
-
-async function upDateFavHandler(req, res) {
-    console.log(req.body);
-    let favId = req.params.favId;
-    let { title, imageUrl } = req.body;
-    FavModel.findByIdAndUpdate(favId, { title, imageUrl }, (err, updDate) => {
-        if (err) {
-            console.log("error in update");
-        } else {
-            console.log('data updated', updDate);
-        }
-    });
-    let email = req.body.email;
-    FavModel.find({ email }, function (err, resultdata) {
-        if (err) {
-            console.log('there is no Data for the eemail');
-        } else {
-            console.log("gggg", resultdata);
-            res.send(resultdata);
-        }
-    })
+    res.send("all is ok")
 }
 
 server.listen(PORT,()=>{
-    console.log(`listing on PORT ${PORT}`);
+    console.log(`listen on port ${PORT}`);
 })
