@@ -12,11 +12,11 @@ let filteredData = data.data.map((obj)=>{
 })
 res.send(filteredData);
 }catch(error){
-console.log(error);
 res.status(500).send('not found')
 }
 
 }
+
 
 
 class FavList {
